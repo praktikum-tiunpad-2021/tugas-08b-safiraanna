@@ -9,7 +9,8 @@ namespace priority_queue {
  */
 template <typename T>
 struct Element {
-  // Implementasikan di sini.
+  T data, priority;
+  Element *next;
 };
 
 template <typename T>
@@ -20,7 +21,7 @@ using ElementPtr = Element<T> *;
  */
 template <typename T>
 struct Queue {
-  // Implementasikan di sini.
+  ElementPtr<T> head, tail;
 };
 
 /**
@@ -30,7 +31,10 @@ struct Queue {
  */
 template <typename T>
 Queue<T> new_queue() {
-  // Implementasikan di sini.
+  Queue<T> Q;
+  Q.head = nullptr;
+  Q.tail = nullptr;
+  return Q;
 }
 
 /**
@@ -42,7 +46,50 @@ Queue<T> new_queue() {
  */
 template <typename T>
 void enqueue(Queue<T> &q, const T &value, int priority) {
-  // Implementasikan di sini.
+  // ============= CREATING NEW ELEMENT =============
+  ElementPtr<T> pNew = new Element<T>;
+  pNew -> data = value;
+  pNew -> priority = priority;
+  pNew -> next = nullptr;
+  // ================================================
+  
+  
+  if (q.head == nullptr && q.tail == nullptr) {
+    q.head = pNew;
+    q.tail = pNew;
+  }
+
+  else {
+    ElementPtr<T> curr = q.head;
+    ElementPtr<T> pRev = nullptr;
+
+    while (pNew -> priority <= curr -> priority) {
+      if (curr -> next == nullptr) {
+        break;
+      }
+      
+      pRev = curr;
+      curr = curr -> next;
+    }
+    
+    // Insert First
+    if (curr == q.head && pNew -> priority > curr -> priority) {
+      pNew -> next = curr;
+      q.head = pNew;
+    }
+
+    // Insert Last
+    else if (curr == q.tail && pNew->priority < curr -> priority) {
+      curr -> next = pNew;
+      q.tail = pNew;
+    }
+
+    // Insert Middle
+    else {
+      pRev -> next = pNew;
+      pNew -> next = curr;
+    }
+  }
 }
 
 /**
@@ -53,7 +100,7 @@ void enqueue(Queue<T> &q, const T &value, int priority) {
  */
 template <typename T>
 T top(const Queue<T> &q) {
-  // Implementasikan di sini.
+  return q.head -> data;
 }
 
 /**
@@ -63,7 +110,22 @@ T top(const Queue<T> &q) {
  */
 template <typename T>
 void dequeue(Queue<T> &q) {
-  // Implementasikan di sini.
+  ElementPtr<T> pDel;
+  if (q.head == nullptr && q.tail == nullptr) {
+    pDel = nullptr;
+  }
+
+  else if (q.head -> next == nullptr) {
+    pDel = q.head;
+    q.head = nullptr;
+    q.tail = nullptr;
+  }
+
+  else {
+    pDel = q.head;
+    q.head = q.head -> next;
+    pDel -> next = nullptr;
+  }
 }
 
 }  // namespace priority_queue
